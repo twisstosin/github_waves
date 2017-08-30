@@ -142,12 +142,13 @@ var repos = [];
   var richResponse = app.buildRichResponse()
   .addSimpleResponse("Alrighty, Checking Up")
 
-    fetch(githubMainUrl, {
-      method: 'GET'
-    }).then(body => {
-      var jsonDat = JSON.stringify(body);
-      console.error(jsonDat);
-      var jsonData = JSON.parse(jsonDat);
+  fetch(githubMainUrl)
+  .then(function(res) {
+      return res.json();
+  }).then(function(json) {
+      console.log(json);
+      console.error(json);
+      var jsonData = json;
     for (var key in jsonData) {
     if (jsonData.hasOwnProperty(key)) {
       console.log(jsonData[key].description);
@@ -167,29 +168,70 @@ var repos = [];
         repo_name: repo_name,
         owner_avatar: owner_avatar};
 
-      repos.push(new_repo);
+      repos.push(new_repo);}
+  }
+  for (var repo in repos) {
+    const card = app.buildBasicCard(repo.repo_name)
+    .addButton(repo.repo_link, "Check it out")
+    .setImage(repo.owner_avatar, "owned by "+owner_username);
 
-    }
-    else
-    {
-      console.log("No Property")
-      richResponse.addSimpleResponse("False key");
-    }
-    }
+    richResponse.addBasicCard(card).addSimpleResponse(repo.repo_desc);
+    richResponse.addSimpleResponse("Check if res added");
+  }
 
-    for (var repo in repos) {
-      const card = app.buildBasicCard(repo.repo_name)
-      .addButton(repo.repo_link, "Check it out")
-      .setImage(repo.owner_avatar, "owned by "+owner_username);
+  richResponse.addSimpleResponse("Final Check "+repos.length);
+  app.ask(richResponse, strings.general.noInputs);
 
-      richResponse.addBasicCard(card).addSimpleResponse(repo.repo_desc);
-      richResponse.addSimpleResponse("Check if res added");
-    }
+  }).catch(err => {console.log(err);});
 
-    richResponse.addSimpleResponse("Final Check "+repos.length);
-    app.ask(richResponse, strings.general.noInputs);
+    // fetch(githubMainUrl, {
+    //   method: 'GET'
+    // }).then(body => {
+    //   var jsonDat = JSON.stringify(body);
+    //   console.error(jsonDat);
+    //   var jsonData = JSON.parse(jsonDat);
+    // for (var key in jsonData) {
+    // if (jsonData.hasOwnProperty(key)) {
+    //   console.log(jsonData[key].description);
+    //   console.log(jsonData[key].name);
+    //   console.log(jsonData[key].url);
+    //   console.log(jsonData[key].owner.login);
+
+    //   var owner_username = jsonData[key].owner.login;
+    //   var repo_desc = jsonData[key].description;
+    //   var repo_link = jsonData[key].url;
+    //   var repo_name = jsonData[key].name;
+    //   var owner_avatar = jsonData[key].owner.avatar_url;
+
+    //   var new_repo = {owner_username: owner_username, 
+    //     repo_desc: repo_desc, 
+    //     repo_link: repo_link, 
+    //     repo_name: repo_name,
+    //     owner_avatar: owner_avatar};
+
+    //   repos.push(new_repo);
+
+    // }
+    // else
+    // {
+    //   console.log("No Property")
+    //   richResponse.addSimpleResponse("False key");
+    // }
+    // }
+
+    // for (var repo in repos) {
+    //   const card = app.buildBasicCard(repo.repo_name)
+    //   .addButton(repo.repo_link, "Check it out")
+    //   .setImage(repo.owner_avatar, "owned by "+owner_username);
+
+    //   richResponse.addBasicCard(card).addSimpleResponse(repo.repo_desc);
+    //   richResponse.addSimpleResponse("Check if res added");
+    // }
+
+    // richResponse.addSimpleResponse("Final Check "+repos.length);
+    // app.ask(richResponse, strings.general.noInputs);
     
-    }).catch(err => {console.log(err);});
+    // }).catch(err => {console.log(err);});
 };
 /**
  * Say a cat fact
