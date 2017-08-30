@@ -144,9 +144,10 @@ var repos = [];
 
     fetch(githubMainUrl, {
       method: 'GET'
-    }).then(res => {
-      var jsonData = JSON.stringify(res.body);
-      console.error(jsonData);
+    }).then(body => {
+      var jsonDat = JSON.stringify(body);
+      console.error(jsonDat);
+      var jsonData = JSON.parse(jsonDat);
     for (var key in jsonData) {
     if (jsonData.hasOwnProperty(key)) {
       console.log(jsonData[key].description);
